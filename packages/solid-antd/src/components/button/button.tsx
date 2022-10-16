@@ -175,7 +175,7 @@ const NativeButton: Component<NativeButtonProps> = (props) => {
 
 const InternalButton: Component<ButtonProps> = (props) => {
   return <Switch>
-    <Match when={'href' in props && props.href}>
+    <Match when={(props as AnchorButtonProps).href !== undefined}>
       <AnchorButton {...props as AnchorButtonProps} />
     </Match>
     <Match when={(props as AnchorButtonProps).href === undefined}>

@@ -29,7 +29,6 @@ export interface BaseButtonProps {
   danger?: boolean;
   block?: boolean;
   children?: JSXElement;
-  ref?: HTMLButtonElement | ((el: HTMLButtonElement) => unknown)
 }
 
 // Typescript will make optional not optional if use Pick with union.
@@ -38,17 +37,17 @@ export interface BaseButtonProps {
 export type AnchorButtonProps = {
   href: string;
   target?: string;
-  onClick?: JSX.EventHandlerUnion<HTMLAnchorElement, MouseEvent>
+  onClick?: JSX.EventHandler<HTMLAnchorElement, MouseEvent>
   ref?: Ref<HTMLAnchorElement>
 } & BaseButtonProps 
-& Omit<JSX.AnchorHTMLAttributes<HTMLAnchorElement>, 'type' | 'onClick'>;
+& Omit<JSX.AnchorHTMLAttributes<HTMLAnchorElement>, 'type' | 'onClick'| 'ref'>;
 
 export type NativeButtonProps = {
   htmlType?: ButtonHTMLType;
-  onClick?: JSX.EventHandlerUnion<HTMLButtonElement, MouseEvent>;
-  ref?: Ref<HTMLAnchorElement>
+  onClick?: JSX.EventHandler<HTMLButtonElement, MouseEvent>;
+  ref?: Ref<HTMLButtonElement>
 } & BaseButtonProps 
-& Omit<JSX.ButtonHTMLAttributes<HTMLButtonElement>, 'type' | 'onClick'>;
+& Omit<JSX.ButtonHTMLAttributes<HTMLButtonElement>, 'type' | 'onClick' | 'ref'>;
 
 export type ButtonProps = AnchorButtonProps | NativeButtonProps;
 
@@ -112,11 +111,8 @@ const NativeButton: Component<NativeButtonProps> = (props) => {
     block = false,
     /** If we extract items here, we don't need use omit.js */
     // React does not recognize the `htmlType` prop on a DOM element. Here we pick it out of `rest`.
-    htmlType = 'button' as ButtonProps['htmlType'],
+    htmlType = 'button',
   } = local;
-
-
-
 
   const { getPrefixCls, autoInsertSpaceInButton, direction } = useContext(ConfigContext);
   const prefixCls = getPrefixCls('btn', customizePrefixCls);
@@ -134,7 +130,7 @@ const NativeButton: Component<NativeButtonProps> = (props) => {
   let buttonRef: HTMLButtonElement;
   // const isNeedInserted = () =>
   //   React.Children.count(children) === 1 && !icon && !isUnBorderedButtonType(type);
-  const handleClick: JSX.EventHandlerUnion<HTMLButtonElement | HTMLAnchorElement, MouseEvent> = (e) => {
+  const handleClick: JSX.EventHandler<HTMLButtonElement, MouseEvent> = (e) => {
     const { onClick } = props;
     // https://github.com/ant-design/ant-design/issues/30207
     if (innerLoading() || mergedDisabled) {
@@ -161,10 +157,10 @@ const NativeButton: Component<NativeButtonProps> = (props) => {
     type={htmlType} 
     ref={(el) => {
       buttonRef = el;
-      if (typeof props.ref === "function") {
-        props.ref(el);
-      } else if (props.ref) {
+      if (props.ref instanceof HTMLElement) {
         props.ref = el;
+      } else if (props.ref) {
+        props.ref(el);
       }
     }}
     disabled={mergedDisabled}
@@ -178,7 +174,6 @@ const NativeButton: Component<NativeButtonProps> = (props) => {
 }
 
 const InternalButton: Component<ButtonProps> = (props) => {
-
   return <Switch>
     <Match when={'href' in props && props.href}>
       <AnchorButton {...props as AnchorButtonProps} />

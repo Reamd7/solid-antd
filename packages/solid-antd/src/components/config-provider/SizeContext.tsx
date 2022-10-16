@@ -10,7 +10,7 @@ export interface SizeContextProps {
   children?: JSXElement;
 }
 
-export const SizeContextProvider = ({ children, size }: SizeContextProps) => {
+export const SizeContextProvider: React.Component<SizeContextProps> = ({ children, size }) => {
   const originSize = React.useContext(SizeContext);
   return <SizeContext.Provider value={size || originSize}>{children}</SizeContext.Provider>
 }

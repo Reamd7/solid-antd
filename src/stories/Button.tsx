@@ -1,5 +1,5 @@
 import { Component, mergeProps, splitProps } from 'solid-js';
-import './button.css';
+import styled from './button.module.css';
 
 export interface ButtonProps {
   /**
@@ -41,12 +41,12 @@ export const Button: Component<ButtonProps> = (props) => {
       {...rest}
       type="button"
       classList={{
-        'storybook-button--small': local.size === 'small',
-        'storybook-button--medium': local.size === 'medium',
-        'storybook-button--large': local.size === 'large',
-        'storybook-button': true,
-        'storybook-button--primary': local.primary === true,
-        'storybook-button--secondary': local.primary === false,
+        [styled['storybook-button--small']]: local.size === 'small',
+        [styled['storybook-button--medium']]: local.size === 'medium',
+        [styled['storybook-button--large']]: local.size === 'large',
+        [styled['storybook-button']]: true,
+        [styled['storybook-button--primary']]: local.primary === true,
+        [styled['storybook-button--secondary']]: local.primary === false,
       }}
       style={{ 'background-color': local.backgroundColor }}
     >
